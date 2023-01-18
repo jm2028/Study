@@ -7,6 +7,7 @@ import Detail from './routes/Detail.js'
 
 function App() {
   let [shoes] = useState(데이터);
+  let navigate = useNavigate();
 
   return (
     <div className="App">
@@ -16,9 +17,9 @@ function App() {
           <Link to='/'>홈</Link>
           <Link to='/detail'>디테일</Link>
           <Nav className="me-auto">
-            <Nav.Link href="#home">Home</Nav.Link>
-            <Nav.Link href="#features">Features</Nav.Link>
-            <Nav.Link href="#pricing">Pricing</Nav.Link>
+            <Nav.Link onClick={()=>{navigate('/')}}>Home</Nav.Link>
+            <Nav.Link onClick={()=>{navigate('/detail')}}>Detail</Nav.Link>
+            <Nav.Link onClick={()=>{navigate(-1)}}>뒤로가기</Nav.Link>
           </Nav>
         </Container>
       </Navbar>
@@ -38,9 +39,37 @@ function App() {
             </div>
             </>
           }/>
-          <Route path='/detail' element={<Detail/>}/>
+          <Route path='/detail/:id' element={<Detail shoes={shoes}/>}/>
+
+          <Route path='/about' element={<About/>}>
+            <Route path='member' element={<div>멤버페이지임</div>}></Route>
+            <Route path='location' element={<div>위치정보임</div>}></Route>
+          </Route>
+          <Route path='/event' element={<Event/>}>
+            <Route path='one' element={<p>첫 주문시 양배추즙 서비스</p>}/>
+            <Route path='two' element={<p>생일기념 쿠폰받기</p>}/>
+          </Route>
+          <Route path='*' element={<div>404페이지</div>}></Route>
       </Routes>
     </div>                    
+  );
+}
+
+function Event () {
+  return (
+    <>
+      <h4>오늘의 이벤트</h4> 
+      <Outlet></Outlet>
+    </>
+  );
+}
+
+function About () {
+  return (
+    <div>
+      <h4>회사 정보임</h4>
+      <Outlet></Outlet>
+    </div>
   );
 }
 
@@ -57,6 +86,17 @@ function Item (props) {
 export default App;
 
 /** Route
- * Route 안에 Routes로 페이지 생성 가능
+ * Routes 안에 Route로 페이지 생성 가능
  * <Link>로 해당 페이지로 이동 가능
+ * useNavigate 훅으로 navigate() 형식으로 페이지 이동 가능 -1은 뒤로가기 +1은 앞으로가기 -2면 두번뒤로가기
+ */
+
+/** NestedRoute
+ * Route 안에 Route로 생성하며 /about/member 형식으로 이동 가능하게 됨
+ * 이동한 페이지에는 부모 페이지인 about의 내용과 member의 내용이 나오며 member의 내용은 부모 컴포넌트의 <Outlet></Outlet>에 위치하게 됨  
+ */
+
+/** useParams()
+ * /:{파라미터} 로 {파라미터} 값을 가져올 수 있음
+ * /:{파라미터1}/:{파라미터2} 처럼 몇번이고 사용 가능
  */
