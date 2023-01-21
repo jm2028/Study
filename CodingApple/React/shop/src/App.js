@@ -1,12 +1,18 @@
-import { useState } from 'react';
+import { createContext, useState } from 'react';
 import { Button, Navbar, Container, Nav } from 'react-bootstrap';
 import './App.css';
 import 데이터 from './data.js';
 import { Routes, Route, Link, useNavigate, Outlet } from 'react-router-dom'
 import Detail from './routes/Detail.js'
+import axios from 'axios';
+import Cart from './routes/Cart.js'
+
+export let Context1 = createContext()
 
 function App() {
-  let [shoes] = useState(데이터);
+  let [shoes, setShoes] = useState(데이터);
+  let [재고] = useState([10, 11, 12])
+
   let navigate = useNavigate();
 
   return (
@@ -14,11 +20,10 @@ function App() {
       <Navbar bg="dark" variant="dark">
         <Container>
           <Navbar.Brand href="#home">Navbar</Navbar.Brand>
-          <Link to='/'>홈</Link>
-          <Link to='/detail'>디테일</Link>
           <Nav className="me-auto">
             <Nav.Link onClick={()=>{navigate('/')}}>Home</Nav.Link>
-            <Nav.Link onClick={()=>{navigate('/detail')}}>Detail</Nav.Link>
+            <Nav.Link onClick={()=>{navigate('/detail/1')}}>Detail</Nav.Link>
+            <Nav.Link onClick={()=>{navigate('/cart')}}>장바구니</Nav.Link>
             <Nav.Link onClick={()=>{navigate(-1)}}>뒤로가기</Nav.Link>
           </Nav>
         </Container>
@@ -37,9 +42,23 @@ function App() {
                 }
               </div>
             </div>
+            <button onClick={()=>{
+              axios.get('https://codingapple1.github.io/shop/data2.json')
+                .then((result)=>{
+                  setShoes([...shoes,...result.data]);
+                })
+                .catch(()=>{
+                  console.log('실패')
+                })
+            }}>버튼</button>
             </>
           }/>
-          <Route path='/detail/:id' element={<Detail shoes={shoes}/>}/>
+          <Route path='/detail/:id' element={
+            <Context1.Provider value={{ 재고, shoes }}>
+              <Detail shoes={shoes}/>
+            </Context1.Provider>
+          }/>
+          <Route path='/cart' element={ <Cart></Cart>}></Route>
 
           <Route path='/about' element={<About/>}>
             <Route path='member' element={<div>멤버페이지임</div>}></Route>
@@ -100,3 +119,7 @@ export default App;
  * /:{파라미터} 로 {파라미터} 값을 가져올 수 있음
  * /:{파라미터1}/:{파라미터2} 처럼 몇번이고 사용 가능
  */
+
+ /** axios
+  * axios는 결과를 바로 object로 변환해줌
+  */
