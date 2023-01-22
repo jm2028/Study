@@ -28,6 +28,14 @@ const Detail = (props) => {
     let thisProduct = props.shoes.find(item => item.id === Number(id));
     
     useEffect(()=>{
+        let watched = JSON.parse(localStorage.getItem('watched'));
+        watched.push(thisProduct.id);
+        watched = new Set(watched);
+        watched = [...watched];
+        localStorage.setItem('watched', JSON.stringify(watched));
+    }, []);
+
+    useEffect(()=>{
         let timer = setTimeout(()=>{ setSale(false) }, 2000);
         
         return ()=>{

@@ -1,23 +1,42 @@
-import { createContext, useState } from 'react';
+import { createContext, lazy, Suspense, useDeferredValue, useEffect, useState, useTransition } from 'react';
 import { Button, Navbar, Container, Nav } from 'react-bootstrap';
 import './App.css';
 import 데이터 from './data.js';
 import { Routes, Route, Link, useNavigate, Outlet } from 'react-router-dom'
-import Detail from './routes/Detail.js'
+// import Detail from './routes/Detail.js'
+// import Cart from './routes/Cart.js'
 import axios from 'axios';
-import Cart from './routes/Cart.js'
+import { useQuery } from 'react-query';
 
 export let Context1 = createContext()
 
+const Detail = lazy(() => import('./routes/Detail.js'));
+const Cart = lazy(() => import('./routes/Cart.js'));
+
 function App() {
+  let [name, setName] = useState('');
+  let test = new Array(10000).fill(0);
+  let [isPending, startTransition] = useTransition();
+  let state = useDeferredValue(name);
+
   let [shoes, setShoes] = useState(데이터);
   let [재고] = useState([10, 11, 12])
-
   let navigate = useNavigate();
+
+  let result = useQuery('작명', ()=>{
+    return axios.get('https://codingapple1.github.io/userdata.json').then((a)=>{ 
+      console.log('재요청함?')
+      return a.data 
+    })
+  })
+
+  useEffect(()=>{
+    !localStorage.getItem('watched') && localStorage.setItem('watched', JSON.stringify([]));
+  }, [])
 
   return (
     <div className="App">
-      <Navbar bg="dark" variant="dark">
+      <Navbar bg="light" variant="light">
         <Container>
           <Navbar.Brand href="#home">Navbar</Navbar.Brand>
           <Nav className="me-auto">
@@ -26,50 +45,68 @@ function App() {
             <Nav.Link onClick={()=>{navigate('/cart')}}>장바구니</Nav.Link>
             <Nav.Link onClick={()=>{navigate(-1)}}>뒤로가기</Nav.Link>
           </Nav>
+          <Nav className='ms-auto'>
+            { result.isLoading ? '로딩중' : result.data.name }
+          </Nav>
         </Container>
       </Navbar>
 
-      <Routes>
-          <Route path='/' element={
-            <>
-            <div className='main-bg' style={{ backgroundImage : `url(${process.env.PUBLIC_URL + '/shoes1.jpg'})`}}></div>
-            <div className='container'>
-              <div className='row'>
-                {
-                  shoes.map((data, idx)=>{
-                    return <Item shoes={data} key={idx}></Item>;
-                  })
-                }
-              </div>
-            </div>
-            <button onClick={()=>{
-              axios.get('https://codingapple1.github.io/shop/data2.json')
-                .then((result)=>{
-                  setShoes([...shoes,...result.data]);
-                })
-                .catch(()=>{
-                  console.log('실패')
-                })
-            }}>버튼</button>
-            </>
-          }/>
-          <Route path='/detail/:id' element={
-            <Context1.Provider value={{ 재고, shoes }}>
-              <Detail shoes={shoes}/>
-            </Context1.Provider>
-          }/>
-          <Route path='/cart' element={ <Cart></Cart>}></Route>
+      <Suspense fallback={<div>로딩중임</div>}>
+        <Routes>
+            <Route path='/' element={
+              <>
 
-          <Route path='/about' element={<About/>}>
-            <Route path='member' element={<div>멤버페이지임</div>}></Route>
-            <Route path='location' element={<div>위치정보임</div>}></Route>
-          </Route>
-          <Route path='/event' element={<Event/>}>
-            <Route path='one' element={<p>첫 주문시 양배추즙 서비스</p>}/>
-            <Route path='two' element={<p>생일기념 쿠폰받기</p>}/>
-          </Route>
-          <Route path='*' element={<div>404페이지</div>}></Route>
-      </Routes>
+              <input onChange={(e)=>{
+                startTransition(()=> {
+                  setName(e.target.value);
+                })
+              }}/>
+              {
+                isPending ? '로딩중' :
+                test.map(()=>{
+                  return <div>{state}</div>
+                })
+              }
+
+              <div className='main-bg' style={{ backgroundImage : `url(${process.env.PUBLIC_URL + '/shoes1.jpg'})`}}></div>
+              <div className='container'>
+                <div className='row'>
+                  {
+                    shoes.map((data, idx)=>{
+                      return <Item shoes={data} key={idx}></Item>;
+                    })
+                  }
+                </div>
+              </div>
+              <button onClick={()=>{
+                axios.get('https://codingapple1.github.io/shop/data2.json')
+                  .then((result)=>{
+                    setShoes([...shoes,...result.data]);
+                  })
+                  .catch(()=>{
+                    console.log('실패')
+                  })
+              }}>버튼</button>
+              </>
+            }/>
+            <Route path='/detail/:id' element={
+                <Context1.Provider value={{ 재고, shoes }}>
+                  <Detail shoes={shoes}/>
+                </Context1.Provider>
+            }/>
+            <Route path='/cart' element={ <Cart></Cart>}></Route>
+
+            <Route path='/about' element={<About/>}>
+              <Route path='member' element={<div>멤버페이지임</div>}></Route>
+              <Route path='location' element={<div>위치정보임</div>}></Route>
+            </Route>
+            <Route path='/event' element={<Event/>}>
+              <Route path='one' element={<p>첫 주문시 양배추즙 서비스</p>}/>
+              <Route path='two' element={<p>생일기념 쿠폰받기</p>}/>
+            </Route>
+            <Route path='*' element={<div>404페이지</div>}></Route>
+        </Routes>
+      </Suspense>
     </div>                    
   );
 }
@@ -93,8 +130,9 @@ function About () {
 }
 
 function Item (props) {
+  let navigate = useNavigate();
   return (
-    <div className='col-md-4'>
+    <div className='col-md-4' onClick={()=>{navigate(`/detail/${props.shoes.id}`)}}>
       <img src={props.shoes.src} alt={props.shoes.title} width='80%' />
       <h4>{props.shoes.title}</h4>
       <p>{props.shoes.price}</p>
