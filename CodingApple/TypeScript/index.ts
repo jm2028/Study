@@ -1,3 +1,4 @@
+{
 let 이름 :string = 'kim';
 let 나이 :number = 30;
 let 출생지역 :string = '경기도';
@@ -116,3 +117,5 @@ function 과목리턴(쌤 : { subject: string | string[]}) :string {
 }
 
 console.log(과목리턴({ subject: 'hello'}));
+
+}
