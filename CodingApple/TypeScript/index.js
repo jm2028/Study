@@ -47,3 +47,52 @@ function 안녕하세요(name) {
 function 숫자또는문자자릿수(x) {
     return x.toString().length;
 }
+function 결혼확률(pay, home, loveable) {
+    var total;
+    total += pay;
+    if (home) {
+        total += 500;
+    }
+    ;
+    if (loveable === '상') {
+        total += 100;
+    }
+    ;
+    if (600 <= total) {
+        return '결혼 가능';
+    }
+}
+결혼확률(500, true, '상');
+// Narrowing 현재 변수의 타입을 특정지어주면 인정됨
+function 내로윙(x) {
+    if (typeof x === 'string') {
+        return x + '1';
+    }
+    else if (typeof x === 'number') {
+        return x + 1;
+    }
+}
+// Assertion 타입 덮어쓰기 (타입을 변경하기 위해 쓰는게 아니라 내로윙 용도로 사용, 들어올 타입을 100% 확실할때 사용, if문 씁시다)
+function 내로윙2(x) {
+    var array = [];
+    array[0] = x;
+}
+function 클리닝함수(x) {
+    return x.map(function (val) { return Number(val); });
+}
+//console.log('클리닝함수', 클리닝함수([1,'2',3,4,'5656', '이건과연']));
+var 철수쌤 = { subject: 'math' };
+var 영희쌤 = { subject: ['science', 'english'] };
+var 민수쌤 = { subject: ['science', 'art', 'korean'] };
+function 과목리턴(쌤) {
+    if (Array.isArray(쌤.subject)) {
+        return 쌤.subject[쌤.subject.length - 1];
+    }
+    else if (typeof 쌤.subject === 'string') {
+        return 쌤.subject;
+    }
+    else {
+        return '없';
+    }
+}
+console.log(과목리턴({ subject: 'hello' }));
