@@ -22,9 +22,9 @@
     // 언노운타입 - 1;
     // 숫자 연산은 숫자 타입에만 가능
     var user = 'kim';
-    var age = undefined;
+    var age_1 = undefined;
     var married = false;
-    var 철수 = [user, age, married];
+    var 철수 = [user, age_1, married];
     var 학교 = {
         score: [100, 97, 84],
         teacher: 'Phil',
