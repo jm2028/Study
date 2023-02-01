@@ -1,5 +1,5 @@
 {
-    var User = /** @class */ (function () {
+    var User_1 = /** @class */ (function () {
         function User(a) {
             this.familyName = 'kim';
             this.name = a + this.familyName;
@@ -9,7 +9,7 @@
         };
         return User;
     }());
-    var 유저1 = new User('민수');
+    var 유저1 = new User_1('민수');
     console.log(유저1);
     유저1.이름변경함수();
     console.log(유저1);

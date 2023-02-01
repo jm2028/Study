@@ -36,3 +36,18 @@ function returnMax(...num: number[]):number {
 }
 
 console.log(returnMax(1,5,246,37,45,87,0));
+
+type obj = {
+    user: string, 
+    comment: number[], 
+    admin: boolean
+}
+function objfunc({user, comment, admin}: obj) {
+    console.log(user, comment, admin);
+}
+objfunc( { user : 'kim', comment : [3,5,4], admin : false } )
+
+function arrfunc([a, b, c]: (number | string | boolean)[]) {
+    console.log(a, b, c);
+}
+arrfunc( [40, 'wine', false] );

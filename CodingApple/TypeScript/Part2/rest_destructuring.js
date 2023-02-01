@@ -43,3 +43,13 @@ function returnMax() {
     return result;
 }
 console.log(returnMax(1, 5, 246, 37, 45, 87, 0));
+function objfunc(_a) {
+    var user = _a.user, comment = _a.comment, admin = _a.admin;
+    console.log(user, comment, admin);
+}
+objfunc({ user: 'kim', comment: [3, 5, 4], admin: false });
+function arrfunc(_a) {
+    var a = _a[0], b = _a[1], c = _a[2];
+    console.log(a, b, c);
+}
+arrfunc([40, 'wine', false]);
