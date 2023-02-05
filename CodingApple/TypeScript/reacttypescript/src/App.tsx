@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
 
 function App() {
+
+  let [user, setUser] = useState('kim');
+
   return (
     <div className="App">
       리액트
