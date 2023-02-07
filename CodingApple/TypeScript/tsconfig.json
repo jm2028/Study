@@ -2,6 +2,8 @@
     "compilerOptions": {
         "target": "ES5",
         "module": "commonjs",
-        "strictNullChecks": true
+        "strictNullChecks": true,
+        // declaration 타입 미리보기
+        "declaration": true
     }
 }
